@@ -1,0 +1,14 @@
+{
+  "moduleNameMapper": {
+    "^src(.*)$": "<rootDir>/src$1"
+  },
+  "moduleFileExtensions": [
+    "js",
+    "ts",
+    "json"
+  ],
+  "transform": {
+    "^.+\\.(js|ts)?$": "babel-jest"
+  },
+  "transformIgnorePatterns": ["<rootDir>/node_modules/"]
+}

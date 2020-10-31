@@ -1,0 +1,16 @@
+# package directories
+node_modules
+jspm_packages
+debug.log
+
+# Serverless directories
+.serverless
+
+# Webpack directories
+.webpack
+
+# IDE specific directory
+.vscode
+
+#secret
+secret.json
