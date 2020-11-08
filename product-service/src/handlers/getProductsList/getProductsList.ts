@@ -1,18 +1,17 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import axios from 'axios';
 import { defaultCors } from 'src/constants/cors';
-import products from 'src/data/products.json';
+import { createConnection, closeConnection } from 'src/utils/db/connect';
 
 export const getProductsList: APIGatewayProxyHandler = async () => {
   try {
-    // Request only for async/await requirement
-    try {
-      const resp = await axios.get(`http://newsapi.org/v2/sources?apiKey=${process.env.NEWS_API_KEY}`);
-      console.log(`news: ${resp.data}`);
-    }
-    catch (err) {
-      console.log(`News api isn't working. ${err}`);
-    }
+    const client = await createConnection();
+
+    const query = `
+      SELECT p.id, p.title, p.description, p.price, s.count
+        FROM products AS p
+        JOIN stocks AS s ON p.id = s.product_id
+    `;
+    const products = (await client.query(query))?.rows;
 
     return {
       statusCode: 200,
@@ -20,9 +19,13 @@ export const getProductsList: APIGatewayProxyHandler = async () => {
       body: JSON.stringify(products, null, 2),
     };
   } catch (err) {
+    console.error(err);
     return {
       statusCode: 500,
+      headers: defaultCors,
       body: 'Internal server error'
     };
+  } finally {
+    closeConnection();
   }
 };

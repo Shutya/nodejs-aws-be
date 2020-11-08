@@ -25,14 +25,23 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: eu-west-1
+  environment:
+    PGHOST: ${file(./secret.json):PGHOST}
+    PGUSER: ${file(./secret.json):PGUSER}
+    PGDATABASE: ${file(./secret.json):PGDATABASE}
+    PGPASSWORD: ${file(./secret.json):PGPASSWORD}
+    PGPORT: ${file(./secret.json):PGPORT}
 
 custom:
   webpack:
     webpackConfig: './webpack.config.js'
     includeModules: true
+  serverless-offline:
+    httpPort: 4000
 
 plugins:
   - 'serverless-webpack'
+  - 'serverless-offline'
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -49,10 +58,6 @@ plugins:
 #          - - "arn:aws:s3:::"
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
 
 # you can add packaging information here
 #package:
@@ -79,6 +84,13 @@ functions:
       - http:
           path: product/{productId}
           method: get
+          cors: true
+  createProduct:
+    handler: src/handlers/createProduct/createProduct.createProduct
+    events:
+      - http:
+          path: product
+          method: post
           cors: true
 
 #      - websocket: $connect
