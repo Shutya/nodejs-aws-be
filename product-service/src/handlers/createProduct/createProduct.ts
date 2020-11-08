@@ -6,12 +6,14 @@ import { productSchema } from 'src/models/Product';
 export const createProduct: APIGatewayProxyHandler = async (event) => {
   try {
     const client = await createConnection();
-    const parsedBody = JSON.parse(event.body);
 
+    const parsedBody = JSON.parse(event?.body ?? '{}');
     console.log('Body: ', parsedBody);
 
+    const { title, description, price, count } = parsedBody;
+
     try {
-      await productSchema.validateAsync(parsedBody);
+      await productSchema.validateAsync({ title, description, price, count });
     } catch(err) {
       return {
         statusCode: 400,
@@ -19,8 +21,6 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
         body: err?.message,
       };
     }
-
-    const { title, description, price, count } = parsedBody;
 
     let result;
 
