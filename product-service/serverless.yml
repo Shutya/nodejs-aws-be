@@ -25,12 +25,6 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: eu-west-1
-  environment:
-    PGHOST: ${file(./secret.json):PGHOST}
-    PGUSER: ${file(./secret.json):PGUSER}
-    PGDATABASE: ${file(./secret.json):PGDATABASE}
-    PGPASSWORD: ${file(./secret.json):PGPASSWORD}
-    PGPORT: ${file(./secret.json):PGPORT}
 
 custom:
   webpack:
@@ -42,6 +36,7 @@ custom:
 plugins:
   - 'serverless-webpack'
   - 'serverless-offline'
+  - 'serverless-dotenv-plugin'
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
