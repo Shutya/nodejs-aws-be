@@ -30,9 +30,13 @@ custom:
   webpack:
     webpackConfig: './webpack.config.js'
     includeModules: true
+  serverless-offline:
+    httpPort: 4000
 
 plugins:
   - 'serverless-webpack'
+  - 'serverless-offline'
+  - 'serverless-dotenv-plugin'
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -49,10 +53,6 @@ plugins:
 #          - - "arn:aws:s3:::"
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
 
 # you can add packaging information here
 #package:
@@ -79,6 +79,13 @@ functions:
       - http:
           path: product/{productId}
           method: get
+          cors: true
+  createProduct:
+    handler: src/handlers/createProduct/createProduct.createProduct
+    events:
+      - http:
+          path: product
+          method: post
           cors: true
 
 #      - websocket: $connect

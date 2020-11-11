@@ -1,13 +1,26 @@
 import { getProductById } from './getProductById';
 import { defaultCors } from 'src/constants/cors';
-import products from 'src/data/products.json';
+
+const mockData = [
+  { id: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f3', title: 'title', description: 'description' },
+  { id: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f4', title: 'title', description: 'description' }
+];
+
+jest.mock('src/utils/db/connect', () => ({
+  createConnection: async () => ({
+    query: async (_query, data) => ({
+      rows: [mockData.find(i => i.id === data[0])]
+    })
+  }),
+  closeConnection: () => { }
+}));
 
 describe('getProductById ', () => {
   it('getProductById should return 400 status code with non integer parameters', async () => {
     const faultResponse = {
       statusCode: 400,
       headers: defaultCors,
-      body: "Invalid input, number expected",
+      body: "Invalid input, uuid expected",
     };
 
     // @ts-ignore
@@ -24,7 +37,9 @@ describe('getProductById ', () => {
     };
 
     // @ts-ignore
-    expect(await getProductById({ pathParameters: { productId: '10000' } }))
+    expect(await getProductById(
+      { pathParameters: { productId: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f9' } })
+    )
       .toEqual(notFoundResponse);
   });
 
@@ -33,10 +48,13 @@ describe('getProductById ', () => {
       const correctResponse = {
         statusCode: 200,
         headers: defaultCors,
-        body: JSON.stringify(products[0], null, 2),
+        body: JSON.stringify(mockData[0], null, 2),
       };
 
       // @ts-ignore
-      expect(await getProductById({ pathParameters: { productId: '1' } })).toEqual(correctResponse);
+      expect(await getProductById({
+        pathParameters: { productId: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f3' } })
+      )
+        .toEqual(correctResponse);
     });
 });
