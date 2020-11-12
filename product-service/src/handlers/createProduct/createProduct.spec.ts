@@ -9,7 +9,7 @@ const mockData = {
 };
 
 
-jest.mock('src/utils/db/connect', () => ({
+jest.mock('lib/db/connect', () => ({
   createConnection: async () => ({
     query: async () => ({
       rows: [mockData]

@@ -12,8 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
     "paths": {
-      "src": [
-        "src"
+      "lib": [
+        "lib"
       ]
     }
   },

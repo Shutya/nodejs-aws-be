@@ -1,19 +1,19 @@
 const path = require('path');
+const { IgnorePlugin } = require('webpack');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
-  context: __dirname,
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   entry: slsw.lib.entries,
   devtool: slsw.lib.webpack.isLocal ? 'cheap-module-eval-source-map' : 'source-map',
   resolve: {
-    extensions: ['.json', '.ts'],
+    extensions: ['.json', '.ts', '.js'],
     symlinks: false,
     cacheWithContext: false,
     alias: {
-      src: path.resolve(__dirname, 'src')
+      lib: path.resolve(__dirname, 'lib'),
     }
   },
   output: {
@@ -39,11 +39,15 @@ module.exports = {
         options: {
           transpileOnly: true,
           experimentalWatchApi: true,
+          configFile: path.resolve(__dirname, 'tsconfig.json'),
         },
       },
     ],
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin()
+    new ForkTsCheckerWebpackPlugin({
+      tsconfig: path.resolve(__dirname, 'tsconfig.json'),
+    }),
+    new IgnorePlugin(/^pg-native$/)
   ],
 };

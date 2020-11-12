@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { defaultCors } from 'src/constants/cors';
-import { createConnection, closeConnection } from 'src/utils/db/connect';
-import { productSchema } from 'src/models/Product';
+import { defaultCors } from 'lib/constants/cors';
+import { createConnection, closeConnection } from 'lib/db/connect';
+import { productSchema } from '../../models/Product';
 
 export const createProduct: APIGatewayProxyHandler = async (event) => {
   try {

@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { validate } from 'uuid';
-import { defaultCors } from 'src/constants/cors';
-import { createConnection, closeConnection } from 'src/utils/db/connect';
+import { defaultCors } from 'lib/constants/cors';
+import { createConnection, closeConnection } from 'lib/db/connect';
 
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   try {

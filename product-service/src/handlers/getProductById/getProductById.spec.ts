@@ -1,12 +1,12 @@
 import { getProductById } from './getProductById';
-import { defaultCors } from 'src/constants/cors';
+import { defaultCors } from 'lib/constants/cors';
 
 const mockData = [
   { id: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f3', title: 'title', description: 'description' },
   { id: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f4', title: 'title', description: 'description' }
 ];
 
-jest.mock('src/utils/db/connect', () => ({
+jest.mock('lib/db/connect', () => ({
   createConnection: async () => ({
     query: async (_query, data) => ({
       rows: [mockData.find(i => i.id === data[0])]
