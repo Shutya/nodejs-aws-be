@@ -1,0 +1,11 @@
+{
+  "name": "import-service",
+  "version": "1.0.0",
+  "description": "Serverless import service using Typescript",
+  "scripts": {
+    "deploy": "sls deploy",
+    "offline": "sls offline"
+  },
+  "author": "Denis Shutikov",
+  "license": "MIT"
+}
