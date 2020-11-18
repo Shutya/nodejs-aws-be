@@ -1,9 +1,11 @@
 import { importProductsFile } from './importProductsFile';
 import AWS from 'aws-sdk-mock';
 
+const url = 'http://some-url.com';
+
 describe('importProductsFile ', () => {
   beforeAll(() => {
-    AWS.mock("S3", "getSignedUrlPromise", Promise.resolve('http://some-url.com'));
+    AWS.mock("S3", "getSignedUrlPromise", Promise.resolve(url));
   });
 
   afterAll(() => {
@@ -34,14 +36,18 @@ describe('importProductsFile ', () => {
     }))?.statusCode).toEqual(400);
   });
 
-  it("createProduct should return 202 status code with valid data",
+  it("importProductsFile should return 202 status code with valid data",
     async () => {
       // @ts-ignore
-      expect((await importProductsFile({
+      const responseData = await importProductsFile({
         queryStringParameters: {
           name: 'file.csv'
         }
-        // @ts-ignore
-      }))?.statusCode).toEqual(202);
+      });
+
+      // @ts-ignore
+      expect(responseData?.statusCode).toEqual(202);
+      // @ts-ignore
+      expect(await responseData.body.promise()).toEqual(url);
     });
 });
