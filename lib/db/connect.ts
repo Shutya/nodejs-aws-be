@@ -1,23 +1,27 @@
-import { Pool, Client } from 'pg';
+import { Client } from 'pg';
 
-const pool = new Pool();
-
-let client;
-
-export const createConnection = async (): Promise<typeof Client> => {
-  console.log('Starting initializing db connection');
-
-  client = await pool.connect();
-
-  console.log('Connected to Postgres DB');
-
-  return client;
+const DB_CONFIG = {
+  ssl: {
+    rejectUnauthorized: false,
+  },
+  connectionTimeoutMillis: 7000,
 };
 
-export const closeConnection = (): void => {
-  console.log('Starting disconnection from db');
+interface DBInterface {
+  client: typeof Client;
+  connect: () => Promise<typeof Client>;
+  disconnect: () => void;
+}
 
-  client.release(true);
+export default class DB implements DBInterface {
+  client = new Client(DB_CONFIG);
 
-  console.log('Disconnected from Postgres DB');
-};
+  async connect () {
+    await this.client.connect();
+    return this.client;
+  }
+
+  disconnect () {
+    this.client.end();
+  }
+}

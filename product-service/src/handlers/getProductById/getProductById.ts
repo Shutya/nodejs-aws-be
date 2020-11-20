@@ -1,12 +1,10 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { validate } from 'uuid';
 import { defaultCors } from 'lib/constants/cors';
-import { createConnection, closeConnection } from 'lib/db/connect';
+import { getProductById as getProductByIdDb } from '../../db/product';
 
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   try {
-    const client = await createConnection();
-
     const productId = event?.pathParameters?.productId;
 
     console.log('Product ID: ', productId);
@@ -18,14 +16,7 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
         body: "Invalid input, uuid expected",
       };
     }
-
-    const query = `
-      SELECT p.id, p.title, p.description, p.price, s.count
-        FROM products AS p
-        JOIN stocks AS s ON p.id = s.product_id
-        WHERE p.id = $1
-    `;
-    const product = (await client.query(query, [productId]))?.rows?.[0];
+    const product = await getProductByIdDb(productId);
 
     if (!product) {
       return {
@@ -47,7 +38,5 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
       headers: defaultCors,
       body: 'Internal server error'
     };
-  } finally {
-    closeConnection();
   }
 };

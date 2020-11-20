@@ -6,13 +6,8 @@ const mockData = [
   { id: 'f48edfd3-adc4-4871-99c5-177a9eb2d0f4', title: 'title', description: 'description' }
 ];
 
-jest.mock('lib/db/connect', () => ({
-  createConnection: async () => ({
-    query: async (_query, data) => ({
-      rows: [mockData.find(i => i.id === data[0])]
-    })
-  }),
-  closeConnection: () => { }
+jest.mock('../../db/product', () => ({
+  getProductById: async (id) => mockData.find(item => item.id === id)
 }));
 
 describe('getProductById ', () => {

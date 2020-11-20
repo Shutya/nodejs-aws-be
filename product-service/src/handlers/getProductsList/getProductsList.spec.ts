@@ -6,13 +6,8 @@ const mockData = [
   { id: 2, title: 'title', description: 'description' }
 ];
 
-jest.mock('lib/db/connect', () => ({
-  createConnection: async () => ({
-    query: async () => ({
-      rows: mockData
-    })
-  }),
-  closeConnection: () => {}
+jest.mock('../../db/product', () => ({
+  getAllProducts: async () => mockData
 }));
 
 describe('getProductsList ', () => {

@@ -1,12 +1,10 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { defaultCors } from 'lib/constants/cors';
-import { createConnection, closeConnection } from 'lib/db/connect';
 import { productSchema } from '../../models/Product';
+import { createProduct as createProductDb } from '../../db/product';
 
 export const createProduct: APIGatewayProxyHandler = async (event) => {
   try {
-    const client = await createConnection();
-
     const parsedBody = JSON.parse(event?.body ?? '{}');
     console.log('Body: ', parsedBody);
 
@@ -22,30 +20,7 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
       };
     }
 
-    let result;
-
-    try {
-      await client.query('BEGIN');
-      const query = `
-        WITH insert_product AS (
-          INSERT INTO products(title, description, price)
-          VALUES ($1, $2, $3)
-          RETURNING id, title, description, price
-        ), insert_stock AS (
-          INSERT INTO stocks(product_id, count)
-          VALUES ( (SELECT id FROM insert_product), $4)
-          RETURNING product_id, count
-        )
-        SELECT id, title, description, price, count
-        FROM insert_product
-        LEFT JOIN insert_stock ON product_id = insert_product.id
-      `;
-      result = (await client.query(query, [ title, description, price, count ]))?.rows?.[0];
-      await client.query('COMMIT');
-    } catch (e) {
-      await client.query('ROLLBACK');
-      throw new Error(e);
-    }
+    const result = await createProductDb([title, description, price, count]);
 
     return {
       statusCode: 200,
@@ -59,7 +34,5 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
       headers: defaultCors,
       body: 'Internal server error'
     };
-  } finally {
-    closeConnection();
   }
 };
