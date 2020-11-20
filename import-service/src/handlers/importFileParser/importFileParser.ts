@@ -1,9 +1,12 @@
 import AWS from 'aws-sdk';
 import csv from 'csv-parser';
+import { promisify } from 'util';
 
 export const importFileParser = async (event) => {
   try {
     const s3 = new AWS.S3();
+    const sqs = new AWS.SQS();
+    const sqsSendMessagePromise = promisify(sqs.sendMessage).bind(sqs);
 
     console.log('Records:', event.Records);
 
@@ -18,7 +21,17 @@ export const importFileParser = async (event) => {
       await new Promise((resolve, reject) => {
         stream
           .pipe(csv())
-          .on('data', data => console.log(data))
+          .on('data', async data => {
+            try {
+              await sqsSendMessagePromise({
+                MessageBody: JSON.stringify(data),
+                QueueUrl: process.env.QueueUrl
+              });
+            } catch (err) {
+              console.error('Error occured during sending data to SQS: ', err);
+              console.log('Tried to send data: ', data);
+            }
+          })
           .on('end', async () => {
             try {
               const fileName = objectSource.split('/').splice(-1)[0];

@@ -18,7 +18,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
   } finally {
     db.disconnect();
   }
-}
+};
 
 export const getProductById = async (productId: string): Promise<Product> => {
   const db = new DB();
@@ -38,7 +38,7 @@ export const getProductById = async (productId: string): Promise<Product> => {
   } finally {
     db.disconnect();
   }
-}
+};
 
 export const createProduct = async (data: string | number[]): Promise<Product> => {
   const db = new DB();
