@@ -38,6 +38,7 @@ plugins:
   - 'serverless-webpack'
   - 'serverless-offline'
   - 'serverless-dotenv-plugin'
+  - 'serverless-pseudo-parameters'
 
 functions:
   importProductsFile:
@@ -51,6 +52,12 @@ functions:
             parameters:
               querystrings:
                 name: true
+          authorizer:
+            name: basicAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+            arn: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:authorization-service-dev-basicAuthorizer
   importFileParser:
     handler: src/handlers/importFileParser/importFileParser.importFileParser
     events:
@@ -93,3 +100,13 @@ resources:
               Resource: arn:aws:s3:::${self:custom.s3.bucket}/*
         Bucket:
           Ref: AwsCource
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'

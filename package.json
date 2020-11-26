@@ -7,7 +7,8 @@
     "product:offline": "cd ./product-service && sls offline",
     "import:deploy": "cd ./import-service && sls deploy",
     "import:offline": "cd ./import-service && sls offline",
-    "all:deploy": "npm run product:deploy && npm run import:deploy",
+    "authorization:deploy": "cd ./authorization-service && sls deploy",
+    "all:deploy": "npm run authorization:deploy && npm run product:deploy && npm run import:deploy",
     "test": "jest --colors"
   },
   "dependencies": {
@@ -37,6 +38,7 @@
     "serverless": "^2.9.0",
     "serverless-dotenv-plugin": "^3.1.0",
     "serverless-offline": "^6.8.0",
+    "serverless-pseudo-parameters": "^2.5.0",
     "serverless-webpack": "^5.2.0",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.10.2",
