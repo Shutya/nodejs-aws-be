@@ -1,0 +1,11 @@
+{
+  "name": "authorization-service",
+  "version": "1.0.0",
+  "description": "Serverless authorization service using Typescript",
+  "scripts": {
+    "deploy": "sls deploy",
+    "offline": "sls offline"
+  },
+  "author": "Denis Shutikov",
+  "license": "MIT"
+}

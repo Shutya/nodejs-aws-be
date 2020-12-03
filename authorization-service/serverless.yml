@@ -1,0 +1,24 @@
+service: authorization-service
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: eu-west-1
+
+custom:
+  webpack:
+    webpackConfig: '../webpack.config.js'
+    includeModules: true
+  serverless-offline:
+    httpPort: 4002
+
+plugins:
+  - 'serverless-webpack'
+  - 'serverless-offline'
+  - 'serverless-dotenv-plugin'
+
+functions:
+  basicAuthorizer:
+    handler: src/handlers/basicAuthorizer/basicAuthorizer.basicAuthorizer
